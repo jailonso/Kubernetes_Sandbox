@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: io.opentracing:opentracing-noop:0.32.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.opentracing/opentracing-noop/0.32.0/2f1698060ba4ed86d757626663ac886e4005c506/opentracing-noop-0.32.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.opentracing/opentracing-noop/0.32.0/d7bf91bf8ffaf2d5ee95133781cde425c09ddc8c/opentracing-noop-0.32.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

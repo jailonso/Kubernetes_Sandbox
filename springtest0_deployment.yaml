@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springtest0
+  labels:
+    tags.datadoghq.com/env: "dev"
+    tags.datadoghq.com/service: "springtest0"
+    tags.datadoghq.com/version: "1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springtest0
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/tags: '{"service: "springtest0"}'
+      labels:
+        app: springtest0
+        tags.datadoghq.com/env: "dev"
+        tags.datadoghq.com/service: "springtest0"
+        tags.datadoghq.com/version: "1.0"
+    spec:
+      containers:
+      - name: springtest0
+        image: zstriker19/springtest0:2
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 9390
+        env:
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: DD_AGENT_PORT
+          value: '8126'
+        - name: DD_SERVICE_NAME
+          value: 'SpringTest0_K8'
+        - name: DD_JMXFETCH_ENABLED
+          value: "true"
+        - name: DD_STATSD_PORT
+          value: '8125'
+        - name: DD_JMXFETCH_STATSD_PORT
+          value: '8125'
+        - name: DD_AGENT_SERVICE_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: DD_AGENT_SERVICE_PORT
+          value: '8126'
+        - name: DD_TRACE_DEBUG
+          value: 'true'
+        - name: DD_SERVICE
+          value: 'springtest0'
+        - name: DD_ENV
+          valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/env']
+        - name: DD_SERVICE
+          valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/service']
+        - name: DD_VERSION
+          valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/version']
+
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springtest0
+spec:
+  selector:
+    app: springtest0
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9390
+  type: LoadBalancer
+

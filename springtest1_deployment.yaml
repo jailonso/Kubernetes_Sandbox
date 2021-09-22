@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springtest1
+  labels:
+    tags.datadoghq.com/env: "dev"
+    tags.datadoghq.com/service: "springtest0"
+    tags.datadoghq.com/version: "1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springtest1
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/tags: '{"service: "springtest1"}'
+      labels:
+        app: springtest1
+        tags.datadoghq.com/env: "dev"
+        tags.datadoghq.com/service: "springtest1"
+        tags.datadoghq.com/version: "1.0"
+    spec:
+      containers:
+      - name: springtest1
+        image: zstriker19/springtest1:2
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 9393
+        env:
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: DD_AGENT_PORT
+          value: '8126'
+        - name: DD_SERVICE_NAME
+          value: 'SpringTest1_K8'
+        - name: DD_JMXFETCH_ENABLED
+          value: "true"
+        - name: DD_STATSD_PORT
+          value: '8125'
+        - name: DD_JMXFETCH_STATSD_PORT
+          value: '8125'
+        - name: DD_AGENT_SERVICE_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: DD_AGENT_SERVICE_PORT
+          value: '8126'
+        - name: DD_TRACE_DEBUG
+          value: 'true'
+        - name: DD_SERVICE
+          value: 'springtest1'
+        - name: DD_ENV
+          valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/env']
+          
+
+      #   volumeMounts:
+      #     - name: SpringBootLogs
+      #       mountPath: /var/l`og
+      # volumes:
+      #   - hostPath:
+      #       path: /var/log
+      #     name: SpringBootLogs
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springtest1
+spec:
+  selector:
+    app: springtest1
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9393
+  type: LoadBalancer
+
+
